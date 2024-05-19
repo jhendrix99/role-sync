@@ -117,8 +117,15 @@ async def sync_members(guild, parent_member_data):
                     if role and role not in member.roles:
                         roles_to_add.append(role)
 
+                # Collect roles to remove
+                roles_to_remove = []
+                for role in member.roles:
+                    if role.name not in data["roles"]:
+                        roles_to_remove.append(role)
+
                 # Update member roles
                 await member.add_roles(*roles_to_add)
+                await member.remove_roles(*roles_to_remove)
 
                 # Update member display name
                 await member.edit(nick=data["display_name"])
@@ -127,6 +134,7 @@ async def sync_members(guild, parent_member_data):
                 print(f"An error occurred while syncing member data for {member_name} in {guild.name}: {e}")
         else:
             print(f"Member {member_name} not found in {guild.name}")
+
 
 
 bot.run(token)
